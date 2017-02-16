@@ -1,39 +1,42 @@
 package com.springboot.vaadin.ui.login;
 
-import com.springboot.vaadin.components.mvp.MvpHasPresenterHandlers;
-import com.springboot.vaadin.components.mvp.MvpView;
 import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
+import com.springboot.vaadin.ui.UserSignedInEvent;
 import com.springboot.vaadin.ui.ViewToken;
 import com.springboot.vaadin.ui.custom.CustomAuthenticationProvider;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.UI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.spring.events.EventBus;
+import org.vaadin.spring.events.EventScope;
+import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 import java.util.Collection;
 
 
 /**
-* Created by maggouh on 13/02/17.
-*/
-@UIScope
-@SpringView(name= ViewToken.SIGNIN)
-public class LoginPresenter extends AbstractMvpPresenterView<LoginPresenter.LoginView> implements LoginPresenterHandlers {
+ * Created by maggouh on 13/02/17.
+ */
+@SpringView(name = ViewToken.SIGNIN)
+public class LoginPresenter extends AbstractMvpPresenterView<ILoginView> implements LoginPresenterHandlers {
 
-    public interface LoginView extends MvpView, MvpHasPresenterHandlers<LoginPresenterHandlers> {
-        void init();
-        void setErrorMessage(String errorMessage);
-    }
+    @Autowired
+    CustomAuthenticationProvider customAuthenticationProvider;
+
+    @Autowired
+    VaadinSession vaadinSession;
+
+    @Autowired
+    VaadinSharedSecurity vaadinSharedSecurity;
+
 
     @Autowired
     public LoginPresenter(LoginView view, EventBus.ViewEventBus eventBus) {
@@ -48,36 +51,26 @@ public class LoginPresenter extends AbstractMvpPresenterView<LoginPresenter.Logi
 
     @Override
     public void doSignIn(String username, String password) {
-
         try {
-			/*
-			 * security.login(username, password);
-			 *
-			 */
-            WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(VaadinServlet.getCurrent().getServletContext());
-            AuthenticationProvider authenticationProvider = (AuthenticationProvider) ctx.getBean("customAuthenticationProvider");
-            Authentication authentication = authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-//            Redirect to UserHome or Admin Home
-//            if (userHasAuthority("ROLE_ADMIN", authentication)) {
-                UI.getCurrent().getNavigator().navigateTo(ViewToken.ADMIN);
-//            } else {
-//                Notification.show("Access denied");
-//            }
+            final SecurityContext securityContext = SecurityContextHolder.getContext();
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+
+            final Authentication authentication = customAuthenticationProvider.authenticate(token);
+            securityContext.setAuthentication(authentication);
+            getEventBus().publish(EventScope.UI, this, new UserSignedInEvent());
+            UI.getCurrent().getNavigator().navigateTo(ViewToken.LIST);
 
         } catch (AuthenticationException e) {
             getView().setErrorMessage(e.getMessage());
         }
 
     }
-    public boolean userHasAuthority(String authority, Authentication authentication) {
 
-        String username = authentication.getName().trim().toLowerCase();
-        String password = authentication.getCredentials().toString().trim();
-        WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(VaadinServlet.getCurrent().getServletContext());
-        AuthenticationProvider authenticationProvider = ctx.getBean(CustomAuthenticationProvider.class);
-        authentication = authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
+    public boolean userHasAuthority(String username, String password, String authority) {
+
+        Authentication authentication = customAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (GrantedAuthority grantedAuthority : authorities) {
             if (authority.equals(grantedAuthority.getAuthority())) {

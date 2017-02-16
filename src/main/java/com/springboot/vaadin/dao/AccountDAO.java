@@ -1,8 +1,8 @@
 package com.springboot.vaadin.dao;
 
-import com.google.inject.Inject;
 import com.springboot.vaadin.dao.exception.UsernameAlreadyUsedException;
 import com.springboot.vaadin.domain.Account;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -15,8 +15,8 @@ import java.util.Map;
 @Repository
 public class AccountDAO {
 
-    @Inject
-    static RoleDAO roleDAO;
+    @Autowired
+    private static RoleDAO roleDAO;
 
     private static Map<Integer, Account> accounts;
 

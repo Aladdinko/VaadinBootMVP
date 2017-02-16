@@ -8,6 +8,7 @@ import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.UI;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.events.EventScope;
+import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 
 /**
@@ -15,45 +16,32 @@ import org.vaadin.spring.events.EventScope;
  */
 public class SecuredNavigator extends Navigator {
 
-
+    final VaadinSharedSecurity vaadinSharedSecurity;
     final SpringViewProvider viewProvider;
     final EventBus.UIEventBus eventBus;
 
-    public SecuredNavigator(UI ui, ViewDisplay display, SpringViewProvider viewProvider, EventBus.UIEventBus eventBus) {
+    public SecuredNavigator(UI ui, ViewDisplay display,VaadinSharedSecurity vaadinSharedSecurity, SpringViewProvider viewProvider, EventBus.UIEventBus eventBus) {
         super(ui, display);
         this.viewProvider = viewProvider;
+        this.vaadinSharedSecurity = vaadinSharedSecurity;
         this.eventBus = eventBus;
         addProvider(this.viewProvider);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see com.vaadin.navigator.Navigator#navigateTo(java.lang.String)
-     */
     @Override
     public void navigateTo(String navigationState) {
 
         if (ViewToken.VALID_TOKENS.contains(navigationState)) {
 
-			/* This method in class should be public
-			 * private boolean isViewBeanNameValidForCurrentUI(String beanName)
-			 *
-			 *  workaround
-			 */
             if ( viewProvider.getView(navigationState) == null ) {
 
-				/*
-				 * Handle entering UI from bookmark
-				 */
                 String uriFragment = extractViewToken();
                 if (uriFragment.equals(navigationState)) {
 
                     super.navigateTo(ViewToken.HOME);
 
                 } else {
-					/*
-	            	 * View is probably @Secured
-	            	 */
+
                     eventBus.publish(EventScope.UI, UI.getCurrent(), new AccessDeniedEvent(navigationState));
                 }
 

@@ -1,14 +1,14 @@
 package com.springboot.vaadin.ui.home;
 
 
-import com.springboot.vaadin.components.mvp.MvpHasPresenterHandlers;
-import com.springboot.vaadin.components.mvp.MvpView;
 import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
 import com.springboot.vaadin.ui.ViewToken;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.vaadin.spring.events.EventBus;
+import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 
 /**
@@ -16,12 +16,11 @@ import org.vaadin.spring.events.EventBus;
  */
 
 @SpringView(name= ViewToken.HOME)
-public class HomePresenter extends AbstractMvpPresenterView<HomePresenter.HomeView> implements HomePresenterHandlers {
+public class HomePresenter extends AbstractMvpPresenterView<IHomeView> implements HomePresenterHandlers {
 
-    public interface HomeView extends MvpView, MvpHasPresenterHandlers<HomePresenterHandlers> {
-        public void initView(String userName, String loginType);
-    }
 
+    @Autowired
+    VaadinSharedSecurity vaadinSharedSecurity;
     @Autowired
     public HomePresenter(HomeView view, EventBus.ViewEventBus eventBus) {
         super(view, eventBus);
@@ -36,8 +35,8 @@ public class HomePresenter extends AbstractMvpPresenterView<HomePresenter.HomeVi
 		 * AnonymousAuthenticationToken
 		 */
 
-//        Authentication authentication = security.getAuthentication();
-//        getView().initView(authentication.getName(), authentication.getClass().getSimpleName());
+        Authentication authentication = vaadinSharedSecurity.getAuthentication();
+        getView().initView(authentication.getName(), authentication.getAuthorities().iterator().next().getAuthority());
 
     }
 

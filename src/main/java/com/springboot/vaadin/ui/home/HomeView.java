@@ -11,14 +11,15 @@ import org.springframework.stereotype.Component;
  * Created by maggouh on 13/02/17.
  */
 @Component
-public class HomeView extends AbstractMvpView implements HomePresenter.HomeView  {
+public class HomeView extends AbstractMvpView implements IHomeView  {
 
     private HomePresenterHandlers mvpPresenterHandlers;
 
     private VerticalLayout content;
 
+    private Label loginType;
+
     private Label caption;
-    private Label loginInfo;
 
     @Override
     public void postConstruct() {
@@ -29,13 +30,13 @@ public class HomeView extends AbstractMvpView implements HomePresenter.HomeView 
         content.setMargin(true);
         setCompositionRoot(content);
 
-        caption = new Label("Caption", ContentMode.HTML);
+        caption = new Label("Welcome", ContentMode.HTML);
         caption.addStyleName(ValoTheme.LABEL_H2);
         content.addComponent(caption);
 
-        loginInfo = new Label("Login Info", ContentMode.HTML);
-        loginInfo.addStyleName(ValoTheme.LABEL_H2);
-        content.addComponent(loginInfo);
+        loginType = new Label(" ", ContentMode.HTML);
+        loginType.addStyleName(ValoTheme.LABEL_H2);
+        content.addComponent(loginType);
 
     }
 
@@ -46,8 +47,8 @@ public class HomeView extends AbstractMvpView implements HomePresenter.HomeView 
     }
 
     @Override
-    public void initView(String userName, String loginType) {
+    public void initView(String userName, String role) {
         caption.setValue("Welcome back " + userName + "!");
-        loginInfo.setValue("You are signed in using " + loginType + "!");
+        loginType.setValue("You have " + role + "!");
     }
 }

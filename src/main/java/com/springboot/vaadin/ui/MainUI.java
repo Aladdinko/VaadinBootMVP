@@ -10,8 +10,7 @@ import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.UI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.spring.events.EventBus;
-
-import java.util.Locale;
+import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 //import org.vaadin.spring.security.util.SecurityExceptionUtils;
 
@@ -27,33 +26,34 @@ public class MainUI extends UI {
     @Autowired
     SpringViewProvider springViewProvider;
 
+//    @Autowired
+//    VaadinSession vaadinSession;
+//
+//    @Autowired
+//    HttpSession httpSession;
+
     @Autowired
     EventBus.UIEventBus eventBus;
+
+    @Autowired
+    VaadinSharedSecurity vaadinSharedSecurity;
 
     @Autowired
     MainLayout mainLayout;
 
     @Override
     protected void init(VaadinRequest request) {
-        setLocale(new Locale.Builder().setLanguage("sr").setScript("Latn").setRegion("RS").build());
-        getPage().setTitle("Vaadin Spring Security");
 
-//        setErrorHandler(new DefaultErrorHandler() {
-//            @Override
-//            public void error(com.vaadin.server.ErrorEvent errorEvent) {
-//                if(SecurityExceptionUtils.isAccessDeniedException(errorEvent.getThrowable())) {
-//                    Notification.show("You don't have access to do that", Notification.Type.WARNING_MESSAGE);
-//                } else {
-//                    super.error(errorEvent);
-//                }
-//            }
-//        });
-        SecuredNavigator securedNavigator = new SecuredNavigator(MainUI.this, mainLayout, springViewProvider, eventBus);
+        getPage().setTitle("Vaadin Spring Boot Security");
+
+//        vaadinSession.getSession().setMaxInactiveInterval(30);
+//        httpSession.setMaxInactiveInterval(30);
+        SecuredNavigator securedNavigator = new SecuredNavigator(MainUI.this, mainLayout, vaadinSharedSecurity, springViewProvider, eventBus);
         securedNavigator.addProvider(springViewProvider);
         securedNavigator.addViewChangeListener(mainLayout);
-
-
         setContent(mainLayout);
         setErrorHandler(new SpringSecurityErrorHandler());
+
     }
+
 }

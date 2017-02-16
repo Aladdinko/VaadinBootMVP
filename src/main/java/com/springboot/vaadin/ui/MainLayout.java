@@ -1,6 +1,7 @@
 package com.springboot.vaadin.ui;
 
 import com.springboot.vaadin.components.mvp.MvpPresenterView;
+import com.springboot.vaadin.domain.Role;
 import com.springboot.vaadin.security.AccessDeniedEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.events.EventScope;
 import org.vaadin.spring.events.annotation.EventBusListenerMethod;
+import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -30,15 +32,19 @@ import java.util.UUID;
 @Component
 public class MainLayout extends VerticalLayout implements ViewDisplay, Button.ClickListener, ViewChangeListener {
 
+
     private Panel viewContainer;
     private HorizontalLayout navbar;
 
     private String key = UUID.randomUUID().toString();
 
     private Button buttonHome;
-    private Button ButtonAdmin;
+    private Button ButtonList;
     private Button buttonLogin;
     private Button buttonLogout;
+
+    @Autowired
+    VaadinSharedSecurity vaadinSharedSecurity;
 
     @Autowired
     EventBus.UIEventBus eventBus;
@@ -67,13 +73,13 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
         buttonHome.addClickListener(this);
         navbar.addComponent(buttonHome);
 
-        ButtonAdmin = new Button("Admin home", FontAwesome.USER_MD);
-        ButtonAdmin.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-        ButtonAdmin.setData(ViewToken.ADMIN);
-        ButtonAdmin.addClickListener(this);
-        navbar.addComponent(ButtonAdmin);
+        ButtonList = new Button("List Users", FontAwesome.USER_MD);
+        ButtonList.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        ButtonList.setData(ViewToken.LIST);
+        ButtonList.addClickListener(this);
+        navbar.addComponent(ButtonList);
 
-        buttonLogin = new Button("Sign in", FontAwesome.SIGN_IN);
+        buttonLogin = new Button("Sign In", FontAwesome.SIGN_IN);
         buttonLogin.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         buttonLogin.setData(ViewToken.SIGNIN);
         buttonLogin.addClickListener(this);
@@ -101,7 +107,7 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authenticationToken);
         UI.getCurrent().getNavigator().navigateTo(ViewToken.HOME);
-        eventBus.publish(EventScope.UI, this, new UserSignedOutEvent());
+        eventBus.publish(EventScope.UI, this,  new UserSignedOutEvent());
     }
 
     @PreDestroy
@@ -138,11 +144,12 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
 
     @Override
     public void showView(View view) {
-//        if (vaadinSecurity.hasAuthority("ROLE_ADMIN")) {
-//            displayAdminNavbar();
-//        } else {
-//            displayAnonymousNavbar();
-//        }
+        if (vaadinSharedSecurity.hasAuthority(Role.ROLE_ADMIN)
+                || vaadinSharedSecurity.hasAuthority(Role.ROLE_USER) ) {
+            displayNavbar();
+        } else {
+            displayAnonymousNavbar();
+        }
 
         if (view instanceof MvpPresenterView) {
             viewContainer.setContent(((MvpPresenterView) view).getViewComponent());
@@ -157,7 +164,7 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
 
     }
 
-    private void displayAdminNavbar() {
+    private void displayNavbar() {
 
         buttonLogout.setVisible(true);
         buttonLogin.setVisible(false);
@@ -167,12 +174,11 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
 
     @EventBusListenerMethod
     public void onAccessDenied(org.vaadin.spring.events.Event<AccessDeniedEvent> event) {
-        //TODO Redirect to login,
 
         if (event.getPayload().getCause() != null) {
-            Notification.show("Access is denied.", "Service can be invoked only by Admin users.", Notification.Type.ERROR_MESSAGE);
+            Notification.show("Access is denied.", "Service can be invoked only by Admin & User users.", Notification.Type.ERROR_MESSAGE);
         } else {
-            Notification.show("Access is denied.", "You must sign in as Admin user before accessing Admin home.", Notification.Type.ERROR_MESSAGE);
+            Notification.show("Access is denied.", "You must sign in as Admin & User user before accessing Admin home.", Notification.Type.ERROR_MESSAGE);
         }
     }
 }

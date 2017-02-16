@@ -7,6 +7,6 @@ import com.springboot.vaadin.components.mvp.MvpView;
 /**
  * Created by maggouh on 15/02/17.
  */
-public interface IAdminView extends MvpView, MvpHasPresenterHandlers<AdminPresenterHandlers> {
+public interface IListView extends MvpView, MvpHasPresenterHandlers<ListPresenterHandlers> {
     void initView();
 }

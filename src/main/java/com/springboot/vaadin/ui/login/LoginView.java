@@ -1,9 +1,9 @@
 package com.springboot.vaadin.ui.login;
 
 import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.stereotype.Component;
@@ -11,11 +11,10 @@ import org.springframework.stereotype.Component;
 /**
 * Created by maggouh on 13/02/17.
 */
-@UIScope
 @Component
-public class LoginView extends AbstractMvpView implements LoginPresenter.LoginView, Button.ClickListener {
+public class LoginView extends AbstractMvpView implements ILoginView, Button.ClickListener {
 
-    private LoginPresenterHandlers mvpPresenterHandlers;
+    private LoginPresenterHandlers loginPresenterHandlers;
 
     private VerticalLayout layout;
     private Label caption;
@@ -68,6 +67,7 @@ public class LoginView extends AbstractMvpView implements LoginPresenter.LoginVi
         btnLogin.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnLogin.addClickListener(this);
         btnLogin.setWidth("100%");
+        btnLogin.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         loginPanel.addComponent(btnLogin);
 
         final Label infoLabel = new Label(FontAwesome.INFO_CIRCLE.getHtml() + " You can sign in as: <br/>\"user\" with password \"user\" <br/>\"admin\" with password \"admin\".", ContentMode.HTML);
@@ -88,13 +88,12 @@ public class LoginView extends AbstractMvpView implements LoginPresenter.LoginVi
 
     @Override
     public void buttonClick(Button.ClickEvent event) {
-		/*
-		 * Signin using username and password
-		 */
-
-        if (event.getButton() == btnLogin) {
-
-            mvpPresenterHandlers.doSignIn(username.getValue(), password.getValue());
+        if( username.getValue() != null && password.getValue() != null){
+            if (event.getButton() == btnLogin) {
+                loginPresenterHandlers.doSignIn(username.getValue(), password.getValue());
+            }
+        } else {
+            Notification.show("Please enter username and password to logIn", Notification.Type.WARNING_MESSAGE);
         }
 
     }
@@ -103,7 +102,7 @@ public class LoginView extends AbstractMvpView implements LoginPresenter.LoginVi
     @Override
     public void setPresenterHandlers(
             LoginPresenterHandlers mvpPresenterHandlers) {
-        this.mvpPresenterHandlers = mvpPresenterHandlers;
+        this.loginPresenterHandlers = mvpPresenterHandlers;
 
     }
 

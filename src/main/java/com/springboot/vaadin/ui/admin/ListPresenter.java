@@ -2,35 +2,40 @@ package com.springboot.vaadin.ui.admin;
 
 import com.springboot.vaadin.components.RTLTable;
 import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
-import com.springboot.vaadin.dao.exception.UsernameAlreadyUsedException;
 import com.springboot.vaadin.domain.Account;
+import com.springboot.vaadin.domain.Role;
 import com.springboot.vaadin.service.AccountService;
-import com.springboot.vaadin.service.RoleService;
 import com.springboot.vaadin.ui.ViewToken;
+import com.springboot.vaadin.ui.admin.modalCreate.SavePresenter;
+import com.springboot.vaadin.ui.events.AccountEvent;
+import com.springboot.vaadin.ui.events.AccountEventType;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.Window;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.vaadin.spring.events.Event;
 import org.vaadin.spring.events.EventBus;
+import org.vaadin.spring.events.annotation.EventBusListenerMethod;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by maggouh on 14/02/17.
  */
 
-@SpringView(name = ViewToken.ADMIN)
-//@Secured({"ROLE_ADMIN"})
-public class AdminPresenter extends AbstractMvpPresenterView<IAdminView> implements AdminPresenterHandlers {
+@SpringView(name = ViewToken.LIST)
+@Secured({Role.ROLE_ADMIN, Role.ROLE_USER})
+public class ListPresenter extends AbstractMvpPresenterView<IListView> implements ListPresenterHandlers {
+
+    @Autowired
+    SavePresenter savePresenter;
 
     @Autowired
     private AccountService accountService;
 
     @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    public AdminPresenter(AdminView view, EventBus eventBus) {
+    public ListPresenter(ListView view, EventBus.ViewEventBus eventBus) {
         super(view, eventBus);
         getView().setPresenterHandlers(this);
     }
@@ -46,17 +51,19 @@ public class AdminPresenter extends AbstractMvpPresenterView<IAdminView> impleme
     }
 
     @Override
-    public Collection<Account> getAllAccounts(){
+    public Collection<Account> getAllAccounts() {
         return accountService.getAllAccounts();
     }
 
     @Override
-    public List<String> getAllRole() {
-        return roleService.getAllRole();
+    public Window showView() {
+        return savePresenter.getView().initView();
     }
 
-    @Override
-    public void createAccount(String username, String password, String roles) throws UsernameAlreadyUsedException {
-        accountService.createAccount(username, password, roles);
+
+    @EventBusListenerMethod
+    public void onAccountEvent(Event<AccountEvent> event) {
+        event.getEventBus().subscribe(new AccountEvent(AccountEventType.CREATE));
     }
+
 }
