@@ -1,6 +1,7 @@
 package com.springboot.vaadin.ui.home;
 
-import org.vaadin.spring.mvp.MvpPresenterHandlers;
+
+import com.springboot.vaadin.components.mvp.MvpPresenterHandlers;
 
 /**
  * Created by maggouh on 13/02/17.

@@ -1,14 +1,15 @@
 package com.springboot.vaadin.ui.home;
 
 
+import com.springboot.vaadin.components.mvp.MvpHasPresenterHandlers;
+import com.springboot.vaadin.components.mvp.MvpView;
+import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
 import com.springboot.vaadin.ui.ViewToken;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.spring.events.EventBus;
-import org.vaadin.spring.mvp.MvpHasPresenterHandlers;
-import org.vaadin.spring.mvp.MvpView;
-import org.vaadin.spring.mvp.presenter.AbstractMvpPresenterView;
+
 
 /**
  * Created by maggouh on 13/02/17.

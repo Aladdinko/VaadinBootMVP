@@ -40,11 +40,11 @@ public class AccountService implements UserDetailsService {
     public Collection<Account> getAllAccounts() {
         return accountDAO.getAllAccounts();
     }
-
     @PreAuthorize("hasRole('"+ Role.ROLE_ADMIN + "')")
     public void createAccount(String username, String password, String role) throws UsernameAlreadyUsedException {
         accountDAO.createAccount(username, password, role);
     }
+
 
     @PreAuthorize("hasRole('"+ Role.ROLE_ADMIN + "')")
     public void setEditable(RTLTable table ,boolean tag) {

@@ -1,5 +1,8 @@
 package com.springboot.vaadin.ui.login;
 
+import com.springboot.vaadin.components.mvp.MvpHasPresenterHandlers;
+import com.springboot.vaadin.components.mvp.MvpView;
+import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
 import com.springboot.vaadin.ui.ViewToken;
 import com.springboot.vaadin.ui.custom.CustomAuthenticationProvider;
 import com.vaadin.navigator.ViewChangeListener;
@@ -16,9 +19,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.vaadin.spring.events.EventBus;
-import org.vaadin.spring.mvp.MvpHasPresenterHandlers;
-import org.vaadin.spring.mvp.MvpView;
-import org.vaadin.spring.mvp.presenter.AbstractMvpPresenterView;
 
 import java.util.Collection;
 
@@ -58,10 +58,12 @@ public class LoginPresenter extends AbstractMvpPresenterView<LoginPresenter.Logi
             AuthenticationProvider authenticationProvider = (AuthenticationProvider) ctx.getBean("customAuthenticationProvider");
             Authentication authentication = authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-            //Redirect to UserHome or Admin Home
-            if (userHasAuthority("ROLE_ADMIN", authentication)) {
+//            Redirect to UserHome or Admin Home
+//            if (userHasAuthority("ROLE_ADMIN", authentication)) {
                 UI.getCurrent().getNavigator().navigateTo(ViewToken.ADMIN);
-            }
+//            } else {
+//                Notification.show("Access denied");
+//            }
 
         } catch (AuthenticationException e) {
             getView().setErrorMessage(e.getMessage());

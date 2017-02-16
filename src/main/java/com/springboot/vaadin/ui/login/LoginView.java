@@ -1,12 +1,12 @@
 package com.springboot.vaadin.ui.login;
 
+import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.stereotype.Component;
-import org.vaadin.spring.mvp.view.AbstractMvpView;
 
 /**
 * Created by maggouh on 13/02/17.

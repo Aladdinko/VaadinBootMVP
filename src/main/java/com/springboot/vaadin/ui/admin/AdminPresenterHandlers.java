@@ -1,9 +1,9 @@
 package com.springboot.vaadin.ui.admin;
 
 import com.springboot.vaadin.components.RTLTable;
+import com.springboot.vaadin.components.mvp.MvpPresenterHandlers;
 import com.springboot.vaadin.dao.exception.UsernameAlreadyUsedException;
 import com.springboot.vaadin.domain.Account;
-import org.vaadin.spring.mvp.MvpPresenterHandlers;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,15 +13,12 @@ import java.util.List;
  */
 public interface AdminPresenterHandlers extends MvpPresenterHandlers {
 
-     void editAccount(RTLTable table, boolean tag);
+    public void editAccount(RTLTable table, boolean tag);
 
+    public Collection<Account> getAllAccounts();
 
-     Collection<Account> getAllAccounts();
+    public List<String> getAllRole();
 
-
-     List<String> getAllRole();
-
-
-     void createAccount(String username, String password, String roles) throws UsernameAlreadyUsedException;
+    public void createAccount(String username, String password, String roles) throws UsernameAlreadyUsedException;
 
 }

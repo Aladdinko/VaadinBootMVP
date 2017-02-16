@@ -3,17 +3,18 @@ package com.springboot.vaadin.ui.admin;
 import com.springboot.vaadin.components.RTLTable;
 import com.springboot.vaadin.components.TableColumnDefinition;
 import com.springboot.vaadin.components.TableColumnDefinitionList;
+import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
 import com.springboot.vaadin.dao.exception.UsernameAlreadyUsedException;
 import com.springboot.vaadin.domain.Account;
 import com.springboot.vaadin.domain.Role;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.vaadin.spring.mvp.view.AbstractMvpView;
+import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,29 +23,15 @@ import java.util.List;
 /**
  * Created by maggouh on 14/02/17.
  */
-@UIScope
-@Component
-public class AdminView extends AbstractMvpView implements AdminPresenter.AdminView {
 
+@Component
+@SuppressWarnings("serial")
+public class AdminView extends AbstractMvpView implements IAdminView {
+    @Autowired
+    VaadinSharedSecurity vaadinSecurity;
     private AdminPresenterHandlers adminPresenterHandlers;
 
     private VerticalLayout layout;
-
-    @Override
-    public void postConstruct() {
-        super.postConstruct();
-        setSizeFull();
-        layout = getListUsersTable();
-//        layout = new CssLayout();
-        layout.setSizeFull();
-        setCompositionRoot(layout);
-
-
-        final Label label = new Label("This is admin only view");
-        label.addStyleName(ValoTheme.LABEL_H2);
-        layout.addComponent(label);
-
-    }
 
     public VerticalLayout getListUsersTable() {
 
@@ -92,22 +79,23 @@ public class AdminView extends AbstractMvpView implements AdminPresenter.AdminVi
 
         tableLayout.addComponent(label);
         tableLayout.addComponent(table);
-//        if (vaadinSharedSecurity.hasAuthority(Role.ROLE_ADMIN)) {
-        tableLayout.addComponent(buttonLayout);
-//        }
+
+        if (vaadinSecurity.hasAuthority(Role.ROLE_ADMIN)) {
+             tableLayout.addComponent(buttonLayout);
+        }
 
         tableLayout.setMargin(true);
         return tableLayout;
     }
 
-    private Window getCreateWindow() {
+    public Window getCreateWindow() {
 
-    final VerticalLayout popupContent = new VerticalLayout();
-    final Window window = new Window("Create Accout View", popupContent);
+        final VerticalLayout popupContent = new VerticalLayout();
+        final Window window = new Window("Create Accout View", popupContent);
 
-    final TextField username = new TextField("Username : ");
-    final TextField password = new TextField("Password : ");
-    final TwinColSelect roles = new TwinColSelect("Roles :");
+        final TextField username = new TextField("Username : ");
+        final TextField password = new TextField("Password : ");
+        final TwinColSelect roles = new TwinColSelect("Roles :");
 
         roles.setLeftColumnCaption("Select role(s) :");
         roles.setRightColumnCaption("role(s) selected :");
@@ -143,7 +131,7 @@ public class AdminView extends AbstractMvpView implements AdminPresenter.AdminVi
         return window;
     }
 
-    private Button buttonCreateUsers(final Window window) {
+    public Button buttonCreateUsers(final Window window) {
 
         Button buttonCreateAccounts = new Button("Open Creating Account", new Button.ClickListener() {
             @Override
@@ -160,7 +148,8 @@ public class AdminView extends AbstractMvpView implements AdminPresenter.AdminVi
         return buttonCreateAccounts;
     }
 
-    private Button buttonEditUsers(final RTLTable table, final boolean tag) {
+
+    public Button buttonEditUsers(final RTLTable table, final boolean tag) {
         Button buttonEditAccounts = new Button("Edit Account", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -173,13 +162,20 @@ public class AdminView extends AbstractMvpView implements AdminPresenter.AdminVi
         return buttonEditAccounts;
     }
 
-    @Override
-    public void initView() {
-
-    }
 
     @Override
     public void setPresenterHandlers(AdminPresenterHandlers adminPresenterHandlers) {
         this.adminPresenterHandlers = adminPresenterHandlers;
     }
+
+    @Override
+    public void initView() {
+        setSizeFull();
+//        layout = new VerticalLayout();
+        layout = getListUsersTable();
+
+        layout.setSizeFull();
+        setCompositionRoot(layout);
+    }
+
 }

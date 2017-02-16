@@ -1,11 +1,11 @@
 package com.springboot.vaadin.ui.home;
 
+import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.stereotype.Component;
-import org.vaadin.spring.mvp.view.AbstractMvpView;
 
 /**
  * Created by maggouh on 13/02/17.

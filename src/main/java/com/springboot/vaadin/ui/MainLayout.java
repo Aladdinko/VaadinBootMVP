@@ -1,5 +1,6 @@
 package com.springboot.vaadin.ui;
 
+import com.springboot.vaadin.components.mvp.MvpPresenterView;
 import com.springboot.vaadin.security.AccessDeniedEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Component;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.events.EventScope;
 import org.vaadin.spring.events.annotation.EventBusListenerMethod;
-import org.vaadin.spring.mvp.MvpPresenterView;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

@@ -13,14 +13,18 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.vaadin.spring.events.annotation.EnableVaadinEventBus;
+import org.vaadin.spring.security.annotation.EnableVaadinSharedSecurity;
+
+//import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 
 @Configuration
-@EnableAutoConfiguration
 @ComponentScan
+@EnableAutoConfiguration
 @EnableVaadinEventBus
 public class VaadinBootApplication {
 
@@ -28,14 +32,17 @@ public class VaadinBootApplication {
         SpringApplication.run(VaadinBootApplication.class, args);
     }
 
-
     @Bean
     static VaadinSessionScope vaadinSessionScope() {
         return new VaadinSessionScope();
     }
 
 
+
+    @Configuration
+    @EnableWebSecurity
     @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true, proxyTargetClass = true)
+    @EnableVaadinSharedSecurity
     static class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Autowired
@@ -56,6 +63,9 @@ public class VaadinBootApplication {
             http.formLogin().disable();
             http.authorizeRequests().antMatchers("/**").anonymous().antMatchers("/vaadinServlet/UIDL/**")
                     .permitAll().antMatchers("/vaadinServlet/HEARTBEAT/**").permitAll().anyRequest().authenticated();
+//            http.logout().addLogoutHandler(new VaadinSessionClosingLogoutHandler()).logoutUrl("/logout")
+//                    .logoutSuccessUrl("/login?logout").permitAll();
+
         }
 
         @Override
