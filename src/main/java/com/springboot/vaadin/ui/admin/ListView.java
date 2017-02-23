@@ -8,10 +8,7 @@ import com.springboot.vaadin.domain.Account;
 import com.springboot.vaadin.domain.Role;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -91,7 +88,12 @@ public class ListView extends AbstractMvpView implements IListView {
         Button buttonCreateAccounts = new Button("Open Creating Account", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                getUI().addWindow(listPresenterHandlers.showView());
+                if(listPresenterHandlers.showView().getParent() != null) {
+                    Notification.show("The window is already open", Notification.Type.HUMANIZED_MESSAGE);
+                } else {
+                    getUI().addWindow(listPresenterHandlers.showView());
+                }
+
             }
         });
         buttonCreateAccounts.setStyleName(ValoTheme.BUTTON_PRIMARY);

@@ -13,12 +13,10 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.vaadin.spring.events.annotation.EnableEventBus;
 import org.vaadin.spring.security.annotation.EnableVaadinSharedSecurity;
 
 
 @SpringBootApplication(exclude = org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class)
-@EnableEventBus
 public class VaadinBootApplication {
 
     public static void main(String[] args) {
