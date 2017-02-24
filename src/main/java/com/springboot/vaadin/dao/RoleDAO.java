@@ -3,8 +3,8 @@ package com.springboot.vaadin.dao;
 import com.springboot.vaadin.domain.Role;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by maggouh on 13/02/17.
@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public  class RoleDAO {
 
-    public static List<Role> getRoleAdmin() {
+    public static Set<Role> getRoleAdmin() {
 
         Role role = new Role();
         role.setName(Role.ROLE_ADMIN);
@@ -22,7 +22,7 @@ public  class RoleDAO {
         role2.setName(Role.ROLE_TRAINEE);
         Role role3 = new Role();
         role3.setName(Role.ROLE_VISITOR);
-        List<Role> rolesAdmin = new ArrayList<Role>();
+        Set<Role> rolesAdmin = new HashSet<Role>();
 
         rolesAdmin.add(role);
         rolesAdmin.add(role1);
@@ -32,42 +32,42 @@ public  class RoleDAO {
         return rolesAdmin;
     }
 
-    public static List<Role> getRoleUser() {
+    public static Set<Role> getRoleUser() {
 
         Role role = new Role();
         role.setName(Role.ROLE_USER);
         Role role1 = new Role();
         role1.setName(Role.ROLE_TRAINEE);
-        List<Role> rolesUser = new ArrayList<Role>();
+        Set<Role> rolesUser = new HashSet<Role>();
         rolesUser.add(role);
         rolesUser.add(role1);
 
         return rolesUser;
     }
 
-    public static List<Role> getRoleTrainee() {
+    public static Set<Role> getRoleTrainee() {
         Role role = new Role();
         role.setName(Role.ROLE_TRAINEE);
-        List<Role> roleTrainee = new ArrayList<Role>();
+        Set<Role> roleTrainee = new HashSet<Role>();
         roleTrainee.add(role);
 
         return roleTrainee;
     }
 
-    public static List<Role> newRoles(String newRole) {
+    public static Set<Role> newRoles(String newRole) {
 
         Role role = new Role();
         role.setName(newRole);
 
-        List<Role> newRoles = new ArrayList<Role>();
+        Set<Role> newRoles = new HashSet<Role>();
         newRoles.add(role);
         return newRoles;
     }
 
-    public static List<Role> getRoleVisitor(){
+    public static Set<Role> getRoleVisitor(){
         Role role = new Role();
         role.setName(Role.ROLE_VISITOR);
-        List<Role> roleVisitor = new ArrayList<Role>();
+        Set<Role> roleVisitor = new HashSet<Role>();
         roleVisitor.add(role);
 
         return roleVisitor;

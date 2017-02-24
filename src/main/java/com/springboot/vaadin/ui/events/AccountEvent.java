@@ -13,6 +13,9 @@ public class AccountEvent {
         this.accountEventType = accountEventType;
     }
 
+    public AccountEventType getAccountEventType() {
+        return accountEventType;
+    }
 
     @Override
     public String toString() {

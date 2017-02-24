@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -27,6 +26,7 @@ public class ListView extends AbstractMvpView implements IListView {
 
     private ListPresenterHandlers listPresenterHandlers;
     private VerticalLayout layout;
+    private RTLTable table;
 
 
     @Autowired
@@ -38,33 +38,23 @@ public class ListView extends AbstractMvpView implements IListView {
         tableLayout.setSizeFull();
 
 
-        Collection<Account> accounts = listPresenterHandlers.getAllAccounts();
 
-        BeanItemContainer<Account> container = new BeanItemContainer<Account>(Account.class, accounts);
-        RTLTable table = new RTLTable("debug1");
-        table.setContainerDataSource(container);
+        table = new RTLTable("debug1");
         table.setCaption("LIST OF USERS ");
         table.addGeneratedColumn("authoritiesList", new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
+                VerticalLayout verticalLayout = new VerticalLayout();
                 Account account = (Account) itemId;
-                Collection<String> rolesString = new ArrayList<String>();
                 for (Role role : account.getAuthorities()) {
-//                    layout.addComponent(new Label(role.getName()));
-                    rolesString.add(role.getAuthority());
+                    verticalLayout.addComponent(new Label(role.toString()));
                 }
-                return rolesString;
+                return verticalLayout;
             }
         });
         table.getColumnAlignment("authoritiesList").toString();
         table.setSelectable(true);
         table.setFooterVisible(true);
-
-        TableColumnDefinitionList columnDefinitionList = new TableColumnDefinitionList();
-        columnDefinitionList.add(0, new TableColumnDefinition("username", "Username", Table.Align.LEFT));
-        columnDefinitionList.add(1, new TableColumnDefinition("password", "Password", Table.Align.LEFT));
-        columnDefinitionList.add(2, new TableColumnDefinition("authoritiesList", "Roles", Table.Align.LEFT));
-        table.setColumnsByColumnDefinitionList(columnDefinitionList);
         table.setSizeFull();
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
@@ -81,7 +71,25 @@ public class ListView extends AbstractMvpView implements IListView {
         }
 
         tableLayout.setMargin(true);
+
+        refreshData();
+
         return tableLayout;
+    }
+
+    public void refreshData() {
+        table.setContainerDataSource(null);
+
+        Collection<Account> accounts = listPresenterHandlers.getAllAccounts();
+
+        BeanItemContainer<Account> container = new BeanItemContainer<Account>(Account.class, accounts);
+        table.setContainerDataSource(container);
+
+        TableColumnDefinitionList columnDefinitionList = new TableColumnDefinitionList();
+        columnDefinitionList.add(0, new TableColumnDefinition("username", "Username", Table.Align.LEFT));
+        columnDefinitionList.add(1, new TableColumnDefinition("password", "Password", Table.Align.LEFT));
+        columnDefinitionList.add(2, new TableColumnDefinition("authoritiesList", "Roles", Table.Align.LEFT));
+        table.setColumnsByColumnDefinitionList(columnDefinitionList);
     }
 
     public Button buttonCreateUsers() {

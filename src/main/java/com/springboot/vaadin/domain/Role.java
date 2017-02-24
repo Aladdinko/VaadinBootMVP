@@ -14,6 +14,13 @@ public class Role implements GrantedAuthority {
     public static final String ROLE_TRAINEE = "ROLE_TRAINEE";
     public static final String ROLE_VISITOR = "ROLE_VISITOR";
 
+    public Role(String name) {
+        this.name = name;
+    }
+
+    public Role() {
+    }
+
     @Override
     public String getAuthority() {
         return this.name;
@@ -27,4 +34,8 @@ public class Role implements GrantedAuthority {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

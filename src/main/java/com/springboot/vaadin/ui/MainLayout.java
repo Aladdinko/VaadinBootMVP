@@ -17,7 +17,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.vaadin.spring.events.EventBus;
-import org.vaadin.spring.events.EventScope;
 import org.vaadin.spring.events.annotation.EventBusListenerMethod;
 import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
@@ -107,7 +106,7 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authenticationToken);
         UI.getCurrent().getNavigator().navigateTo(ViewToken.HOME);
-        eventBus.publish(EventScope.UI, this,  new UserSignedOutEvent());
+//        eventBus.publish(EventScope.UI, this,  new UserSignedOutEvent());
     }
 
     @PreDestroy

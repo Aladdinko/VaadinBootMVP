@@ -2,12 +2,14 @@ package com.springboot.vaadin.dao;
 
 import com.springboot.vaadin.dao.exception.UsernameAlreadyUsedException;
 import com.springboot.vaadin.domain.Account;
+import com.springboot.vaadin.domain.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by maggouh on 13/02/17.
@@ -41,8 +43,8 @@ public class AccountDAO {
         accounts.put(nextId++, visitor);
     }
 
-    public void createAccount(String userName, String password, String role) throws UsernameAlreadyUsedException {
-        accounts.put(nextId++, new Account(userName, password, roleDAO.newRoles(role)));
+    public void createAccount(String userName, String password, Set<Role> role) throws UsernameAlreadyUsedException {
+        accounts.put(nextId++, new Account(userName, password, role));
     }
 
     public Account findAccountByUsername(String username) {

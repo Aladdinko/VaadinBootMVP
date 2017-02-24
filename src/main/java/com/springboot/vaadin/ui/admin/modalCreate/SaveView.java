@@ -2,20 +2,20 @@ package com.springboot.vaadin.ui.admin.modalCreate;
 
 import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
 import com.springboot.vaadin.dao.exception.UsernameAlreadyUsedException;
+import com.springboot.vaadin.domain.Role;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
-import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by maggouh on 21/02/17.
  */
-@UIScope
+@ViewScope
 @Component
 public class SaveView extends AbstractMvpView implements ISaveView {
 
@@ -41,8 +41,8 @@ public class SaveView extends AbstractMvpView implements ISaveView {
         roles.setRightColumnCaption("role(s) selected :");
         roles.setMultiSelect(true);
 
-        List<String> authorities = savePresenterHandlers.getAllRole();
-        BeanItemContainer<String> container = new BeanItemContainer<String>(String.class, authorities);
+        Set<Role> authorities = savePresenterHandlers.getAllRole();
+        BeanItemContainer<Role> container = new BeanItemContainer<Role>(Role.class, authorities);
 
         roles.setContainerDataSource(container);
 
@@ -54,9 +54,8 @@ public class SaveView extends AbstractMvpView implements ISaveView {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 try {
-                    savePresenterHandlers.SaveAccount(username.getValue(), password.getValue(), roles.getValue().toString());
+                    savePresenterHandlers.SaveAccount(username.getValue(), password.getValue(), (Set<Role>)roles.getValue());
                     window.close();
-                    Page.getCurrent().reload();
                 } catch (UsernameAlreadyUsedException e) {
                     e.printStackTrace();
                 }

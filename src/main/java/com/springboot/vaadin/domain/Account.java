@@ -2,7 +2,7 @@ package com.springboot.vaadin.domain;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by maggouh on 13/02/17.
@@ -14,7 +14,7 @@ public class Account  implements UserDetails {
     private String password;
 
     //Spring security related fields
-    private List<Role> authorities;
+    private Set<Role> authorities;
     private boolean accountNonExpired = true;
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
@@ -22,7 +22,7 @@ public class Account  implements UserDetails {
 
     public Account(){}
 
-    public Account(String username, String password, List<Role> authorities) {
+    public Account(String username, String password, Set<Role> authorities) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
@@ -33,11 +33,11 @@ public class Account  implements UserDetails {
         this.password = password;
     }
 
-    public void setAuthorities(List<Role> authorities) {
+    public void setAuthorities(Set<Role> authorities) {
         this.authorities = authorities;
     }
     @Override
-    public List<Role> getAuthorities() {
+    public Set<Role> getAuthorities() {
         return authorities;
     }
 

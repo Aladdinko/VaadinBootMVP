@@ -38,6 +38,7 @@ public class ListPresenter extends AbstractMvpPresenterView<IListView> implement
     public ListPresenter(ListView view, EventBus.ViewEventBus eventBus) {
         super(view, eventBus);
         getView().setPresenterHandlers(this);
+        eventBus.subscribe(this);
     }
 
     @Override
@@ -63,7 +64,9 @@ public class ListPresenter extends AbstractMvpPresenterView<IListView> implement
 
     @EventBusListenerMethod
     public void onAccountEvent(Event<AccountEvent> event) {
-        event.getEventBus().subscribe(new AccountEvent(AccountEventType.CREATE));
+        if (event.getPayload().getAccountEventType().equals(AccountEventType.CREATE)) {
+            getView().refreshData();
+        }
     }
 
 }

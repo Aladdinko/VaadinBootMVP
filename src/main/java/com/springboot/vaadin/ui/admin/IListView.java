@@ -9,4 +9,6 @@ import com.springboot.vaadin.components.mvp.MvpView;
  */
 public interface IListView extends MvpView, MvpHasPresenterHandlers<ListPresenterHandlers> {
     void initView();
+
+    void refreshData();
 }
