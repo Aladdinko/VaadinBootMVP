@@ -26,12 +26,6 @@ public class MainUI extends UI {
     @Autowired
     SpringViewProvider springViewProvider;
 
-//    @Autowired
-//    VaadinSession vaadinSession;
-//
-//    @Autowired
-//    HttpSession httpSession;
-
     @Autowired
     EventBus.UIEventBus eventBus;
 
@@ -46,8 +40,6 @@ public class MainUI extends UI {
 
         getPage().setTitle("Vaadin Spring Boot Security");
 
-//        vaadinSession.getSession().setMaxInactiveInterval(30);
-//        httpSession.setMaxInactiveInterval(30);
         SecuredNavigator securedNavigator = new SecuredNavigator(MainUI.this, mainLayout, vaadinSharedSecurity, springViewProvider, eventBus);
         securedNavigator.addProvider(springViewProvider);
         securedNavigator.addViewChangeListener(mainLayout);

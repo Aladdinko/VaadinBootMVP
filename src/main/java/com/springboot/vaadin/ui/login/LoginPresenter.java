@@ -1,7 +1,6 @@
 package com.springboot.vaadin.ui.login;
 
 import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
-import com.springboot.vaadin.ui.UserSignedInEvent;
 import com.springboot.vaadin.ui.ViewToken;
 import com.springboot.vaadin.ui.custom.CustomAuthenticationProvider;
 import com.vaadin.navigator.ViewChangeListener;
@@ -16,7 +15,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.spring.events.EventBus;
-import org.vaadin.spring.events.EventScope;
 import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 import java.util.Collection;
@@ -58,7 +56,6 @@ public class LoginPresenter extends AbstractMvpPresenterView<ILoginView> impleme
 
             final Authentication authentication = customAuthenticationProvider.authenticate(token);
             securityContext.setAuthentication(authentication);
-            getEventBus().publish(EventScope.UI, this, new UserSignedInEvent());
             UI.getCurrent().getNavigator().navigateTo(ViewToken.LIST);
 
         } catch (AuthenticationException e) {

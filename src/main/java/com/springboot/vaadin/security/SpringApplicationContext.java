@@ -6,8 +6,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.vaadin.spring.events.EventBus;
 
 /**
- * Created by maggouh on 13/02/17.
- */
+* Created by maggouh on 13/02/17.
+*/
 public class SpringApplicationContext implements ApplicationContextAware {
 
     private static ApplicationContext ctx;

@@ -106,7 +106,6 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authenticationToken);
         UI.getCurrent().getNavigator().navigateTo(ViewToken.HOME);
-//        eventBus.publish(EventScope.UI, this,  new UserSignedOutEvent());
     }
 
     @PreDestroy

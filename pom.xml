@@ -84,16 +84,17 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.vaadin.spring.addons</groupId>
-            <artifactId>vaadin-spring-addon-eventbus</artifactId>
-            <version>0.0.7.RELEASE</version>
-        </dependency>
-        <dependency>
             <groupId>org.vaadin.spring.extensions</groupId>
             <artifactId>vaadin-spring-ext-security</artifactId>
             <version>0.0.7.RELEASE</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.vaadin.spring.addons</groupId>
+            <artifactId>vaadin-spring-addon-eventbus</artifactId>
+            <version>0.0.7.RELEASE</version>
+        </dependency>
+
 
     </dependencies>
 
