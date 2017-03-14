@@ -1,6 +1,5 @@
 package com.springboot.vaadin.ui.admin;
 
-import com.springboot.vaadin.components.RTLTable;
 import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
 import com.springboot.vaadin.domain.Account;
 import com.springboot.vaadin.domain.Role;
@@ -11,7 +10,6 @@ import com.springboot.vaadin.ui.events.AccountEvent;
 import com.springboot.vaadin.ui.events.AccountEventType;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Window;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.events.Event;
@@ -25,8 +23,8 @@ import java.util.Collection;
  */
 
 @SpringView(name = ViewToken.LIST)
-@Secured({Role.ROLE_ADMIN, Role.ROLE_USER})
-public class ListPresenter extends AbstractMvpPresenterView<IListView> implements ListPresenterHandlers {
+@Secured({Role.ROLE_ADMIN, Role.ROLE_USER, Role.ROLE_TRAINEE})
+public class ListPresenter extends AbstractMvpPresenterView<ListView> {
 
     @Autowired
     SavePresenter savePresenter;
@@ -34,33 +32,36 @@ public class ListPresenter extends AbstractMvpPresenterView<IListView> implement
     @Autowired
     private AccountService accountService;
 
+    private EventBus.ViewEventBus eventBus;
+
     @Autowired
     public ListPresenter(ListView view, EventBus.ViewEventBus eventBus) {
         super(view, eventBus);
-        getView().setPresenterHandlers(this);
+        this.eventBus = eventBus;
+        getView().setPresenter(this);
         eventBus.subscribe(this);
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        getView().initView();
+        getView().buildView();
     }
 
-    @Override
-    public void editAccount(RTLTable table, boolean tag) {
-        accountService.setEditable(table, tag);
-    }
-
-    @Override
     public Collection<Account> getAllAccounts() {
         return accountService.getAllAccounts();
     }
 
-    @Override
-    public Window showView() {
-        return savePresenter.getView().initView();
+    public void openWindowCreation() {
+        savePresenter.openWindowCreation();
     }
 
+    public void openWindowEdition(Account accountSelected) {
+        savePresenter.openWindowEdition(accountSelected);
+    }
+
+    public void setModelPresenter(Collection<Account> accounts) {
+        getView().setModel(accounts);
+    }
 
     @EventBusListenerMethod
     public void onAccountEvent(Event<AccountEvent> event) {
@@ -68,5 +69,4 @@ public class ListPresenter extends AbstractMvpPresenterView<IListView> implement
             getView().refreshData();
         }
     }
-
 }

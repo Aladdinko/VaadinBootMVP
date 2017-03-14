@@ -1,7 +1,7 @@
 package com.springboot.vaadin.components.mvp.presenter;
 
-import com.springboot.vaadin.components.mvp.MvpPresenterView;
-import com.springboot.vaadin.components.mvp.MvpView;
+import com.springboot.vaadin.components.mvp.view.MvpView;
+import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Component;
 import org.vaadin.spring.events.EventBus;
@@ -13,7 +13,7 @@ import javax.annotation.PreDestroy;
  * Created by maggouh on 16/02/17.
  */
 @SuppressWarnings("serial")
-public abstract class AbstractMvpPresenterView<V extends MvpView> implements MvpPresenterView {
+public abstract class AbstractMvpPresenterView<V extends MvpView> implements MvpPresenter, View {
 
     private final V view;
     private final EventBus eventBus;
@@ -37,7 +37,6 @@ public abstract class AbstractMvpPresenterView<V extends MvpView> implements Mvp
     }
 
     @PostConstruct
-    @Override
     public void postConstruct() {
         eventBus.subscribe(this);
     }
@@ -46,9 +45,9 @@ public abstract class AbstractMvpPresenterView<V extends MvpView> implements Mvp
     public abstract void enter(ViewChangeListener.ViewChangeEvent event);
 
     @PreDestroy
-    @Override
     public void preDestroy() {
         eventBus.unsubscribe(this);
     }
+
 
 }

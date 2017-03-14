@@ -5,9 +5,7 @@ package com.springboot.vaadin.ui.events;
  */
 public class AccountEvent {
 
-
     private final AccountEventType accountEventType;
-
 
     public AccountEvent(AccountEventType accountEventType) {
         this.accountEventType = accountEventType;
@@ -21,6 +19,4 @@ public class AccountEvent {
     public String toString() {
         return "Event : " + accountEventType.toString();
     }
-
-
 }

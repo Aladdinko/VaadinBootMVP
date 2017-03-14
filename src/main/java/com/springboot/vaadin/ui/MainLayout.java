@@ -1,6 +1,6 @@
 package com.springboot.vaadin.ui;
 
-import com.springboot.vaadin.components.mvp.MvpPresenterView;
+import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
 import com.springboot.vaadin.domain.Role;
 import com.springboot.vaadin.security.AccessDeniedEvent;
 import com.vaadin.navigator.View;
@@ -25,8 +25,8 @@ import javax.annotation.PreDestroy;
 import java.util.UUID;
 
 /**
- * Created by maggouh on 13/02/17.
- */
+* Created by maggouh on 13/02/17.
+*/
 @UIScope
 @Component
 public class MainLayout extends VerticalLayout implements ViewDisplay, Button.ClickListener, ViewChangeListener {
@@ -40,6 +40,7 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
     private Button buttonHome;
     private Button ButtonList;
     private Button buttonLogin;
+    private Button buttonPdf;
     private Button buttonLogout;
 
     @Autowired
@@ -49,7 +50,7 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
     EventBus.UIEventBus eventBus;
 
     @PostConstruct
-    public void postConstuct() {
+    public void postConstruct() {
         setSizeFull();
         eventBus.subscribe(this);
 
@@ -60,7 +61,7 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
         addComponent(navbar);
 
         final Label brand = new Label("Vaadin Spring Boot Example & MVP");
-        brand.addStyleName(ValoTheme.LABEL_H2);
+        brand.addStyleName(ValoTheme.LABEL_H3);
         brand.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         navbar.addComponent(brand);
         navbar.setComponentAlignment(brand, Alignment.MIDDLE_LEFT);
@@ -77,6 +78,12 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
         ButtonList.setData(ViewToken.LIST);
         ButtonList.addClickListener(this);
         navbar.addComponent(ButtonList);
+
+        buttonPdf = new Button("Pdf", FontAwesome.USER_MD);
+        buttonPdf.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        buttonPdf.setData(ViewToken.PDFGENERATION);
+        buttonPdf.addClickListener(this);
+        navbar.addComponent(buttonPdf);
 
         buttonLogin = new Button("Sign In", FontAwesome.SIGN_IN);
         buttonLogin.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -143,19 +150,21 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
     @Override
     public void showView(View view) {
         if (vaadinSharedSecurity.hasAuthority(Role.ROLE_ADMIN)
-                || vaadinSharedSecurity.hasAuthority(Role.ROLE_USER) ) {
+                || vaadinSharedSecurity.hasAuthority(Role.ROLE_USER)
+                     || vaadinSharedSecurity.hasAuthority(Role.ROLE_TRAINEE)) {
             displayNavbar();
         } else {
             displayAnonymousNavbar();
         }
 
-        if (view instanceof MvpPresenterView) {
-            viewContainer.setContent(((MvpPresenterView) view).getViewComponent());
+        if (view instanceof AbstractMvpPresenterView) {
+            viewContainer.setContent(((AbstractMvpPresenterView) view).getViewComponent());
         }
     }
 
     private void displayAnonymousNavbar() {
 
+        buttonPdf.setVisible(false);
         buttonLogout.setVisible(false);
         buttonLogin.setVisible(true);
         buttonHome.setVisible(true);
@@ -167,6 +176,7 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
         buttonLogout.setVisible(true);
         buttonLogin.setVisible(false);
         buttonHome.setVisible(true);
+        buttonPdf.setVisible(true);
 
     }
 

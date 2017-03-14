@@ -1,6 +1,7 @@
 package com.springboot.vaadin.ui.login;
 
 import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
+import com.springboot.vaadin.components.mvp.view.MvpView;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -12,9 +13,10 @@ import org.springframework.stereotype.Component;
 * Created by maggouh on 13/02/17.
 */
 @Component
-public class LoginView extends AbstractMvpView implements ILoginView, Button.ClickListener {
+public class LoginView extends AbstractMvpView<LoginPresenter> implements Button.ClickListener {
 
-    private LoginPresenterHandlers loginPresenterHandlers;
+    private LoginPresenter loginPresenter;
+    private boolean needsBuilding = true;
 
     private VerticalLayout layout;
     private Label caption;
@@ -26,7 +28,6 @@ public class LoginView extends AbstractMvpView implements ILoginView, Button.Cli
 
     @Override
     public void postConstruct() {
-        super.postConstruct();
         setSizeFull();
         layout = new VerticalLayout();
         layout.setSizeFull();
@@ -75,22 +76,20 @@ public class LoginView extends AbstractMvpView implements ILoginView, Button.Cli
         loginPanel.addComponent(infoLabel);
     }
 
-
     @Override
-    public void init() {
-        errorMessage.setVisible(false);
-        username.setValidationVisible(false);
-        password.setValidationVisible(false);
-        username.setValue(null);
-        password.setValue(null);
+    public MvpView<LoginPresenter> buildView() {
+        if(needsBuilding) {
+            needsBuilding = false;
+            postConstruct();
+        }
+       return this;
     }
-
 
     @Override
     public void buttonClick(Button.ClickEvent event) {
         if( username.getValue() != null && password.getValue() != null){
             if (event.getButton() == btnLogin) {
-                loginPresenterHandlers.doSignIn(username.getValue(), password.getValue());
+                loginPresenter.doSignIn(username.getValue(), password.getValue());
             }
         } else {
             Notification.show("Please enter username and password to logIn", Notification.Type.WARNING_MESSAGE);
@@ -98,20 +97,22 @@ public class LoginView extends AbstractMvpView implements ILoginView, Button.Cli
 
     }
 
-
     @Override
-    public void setPresenterHandlers(
-            LoginPresenterHandlers mvpPresenterHandlers) {
-        this.loginPresenterHandlers = mvpPresenterHandlers;
-
+    public void setPresenter( LoginPresenter loginPresenter) {
+        this.loginPresenter = loginPresenter;
     }
 
-
-    @Override
     public void setErrorMessage(String error) {
         errorMessage.setValue(error);
         errorMessage.setVisible(true);
+    }
 
+    public void init() {
+        errorMessage.setVisible(false);
+        username.setValidationVisible(false);
+        password.setValidationVisible(false);
+        username.setValue(null);
+        password.setValue(null);
     }
 
 }

@@ -46,6 +46,7 @@ public class MainUI extends UI {
         setContent(mainLayout);
         setErrorHandler(new SpringSecurityErrorHandler());
 
+
     }
 
 }

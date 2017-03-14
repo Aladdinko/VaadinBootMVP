@@ -28,10 +28,7 @@ public class Account  implements UserDetails {
         this.authorities = authorities;
     }
 
-    public Account(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+
 
     public void setAuthorities(Set<Role> authorities) {
         this.authorities = authorities;

@@ -24,7 +24,7 @@ import java.util.Collection;
  * Created by maggouh on 13/02/17.
  */
 @SpringView(name = ViewToken.SIGNIN)
-public class LoginPresenter extends AbstractMvpPresenterView<ILoginView> implements LoginPresenterHandlers {
+public class LoginPresenter extends AbstractMvpPresenterView<LoginView> {
 
     @Autowired
     CustomAuthenticationProvider customAuthenticationProvider;
@@ -39,7 +39,7 @@ public class LoginPresenter extends AbstractMvpPresenterView<ILoginView> impleme
     @Autowired
     public LoginPresenter(LoginView view, EventBus.ViewEventBus eventBus) {
         super(view, eventBus);
-        getView().setPresenterHandlers(this);
+        getView().setPresenter(this);
     }
 
     @Override
@@ -47,7 +47,6 @@ public class LoginPresenter extends AbstractMvpPresenterView<ILoginView> impleme
         getView().init();
     }
 
-    @Override
     public void doSignIn(String username, String password) {
         try {
 

@@ -48,20 +48,10 @@ public  class RoleDAO {
     public static Set<Role> getRoleTrainee() {
         Role role = new Role();
         role.setName(Role.ROLE_TRAINEE);
-        Set<Role> roleTrainee = new HashSet<Role>();
+        Set<Role> roleTrainee =  new HashSet<Role>();
         roleTrainee.add(role);
 
         return roleTrainee;
-    }
-
-    public static Set<Role> newRoles(String newRole) {
-
-        Role role = new Role();
-        role.setName(newRole);
-
-        Set<Role> newRoles = new HashSet<Role>();
-        newRoles.add(role);
-        return newRoles;
     }
 
     public static Set<Role> getRoleVisitor(){

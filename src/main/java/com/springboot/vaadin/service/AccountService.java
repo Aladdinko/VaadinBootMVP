@@ -1,10 +1,9 @@
 package com.springboot.vaadin.service;
 
-import com.springboot.vaadin.components.RTLTable;
 import com.springboot.vaadin.dao.AccountDAO;
 import com.springboot.vaadin.dao.exception.UsernameAlreadyUsedException;
 import com.springboot.vaadin.domain.Account;
-import com.springboot.vaadin.domain.Role;
+import com.vaadin.data.util.BeanItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Created by maggouh on 13/02/17.
@@ -37,17 +35,14 @@ public class AccountService implements UserDetailsService {
         }
     }
 
+
     public Collection<Account> getAllAccounts() {
         return accountDAO.getAllAccounts();
     }
-//    @PreAuthorize("hasRole('"+ Role.ROLE_ADMIN + "')")
-    public void createAccount(String username, String password, Set<Role> role) throws UsernameAlreadyUsedException {
-        accountDAO.createAccount(username, password, role);
-    }
 
+    public void createAccount(BeanItem<Account> accountBeanItem) throws UsernameAlreadyUsedException {
+        Account account = accountBeanItem.getBean();
+        accountDAO.createAccount(account);
+   }
 
-//    @PreAuthorize("hasRole('"+ Role.ROLE_ADMIN + "')")
-    public void setEditable(RTLTable table ,boolean tag) {
-        table.setEditable(tag);
-    }
 }

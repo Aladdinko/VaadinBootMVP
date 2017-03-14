@@ -1,6 +1,7 @@
 package com.springboot.vaadin.ui.home;
 
 import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
+import com.springboot.vaadin.components.mvp.view.MvpView;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -11,9 +12,11 @@ import org.springframework.stereotype.Component;
  * Created by maggouh on 13/02/17.
  */
 @Component
-public class HomeView extends AbstractMvpView implements IHomeView  {
+public class HomeView extends AbstractMvpView<HomePresenter> {
 
-    private HomePresenterHandlers mvpPresenterHandlers;
+    private HomePresenter homePresenter;
+    private boolean needsBuilding = true;
+
 
     private VerticalLayout content;
 
@@ -21,10 +24,9 @@ public class HomeView extends AbstractMvpView implements IHomeView  {
 
     private Label caption;
 
+
     @Override
     public void postConstruct() {
-        super.postConstruct();
-
         content = new VerticalLayout();
         content.setSpacing(true);
         content.setMargin(true);
@@ -34,21 +36,24 @@ public class HomeView extends AbstractMvpView implements IHomeView  {
         caption.addStyleName(ValoTheme.LABEL_H2);
         content.addComponent(caption);
 
-        loginType = new Label(" ", ContentMode.HTML);
-        loginType.addStyleName(ValoTheme.LABEL_H2);
-        content.addComponent(loginType);
-
     }
 
     @Override
-    public void setPresenterHandlers(HomePresenterHandlers mvpPresenterHandlers) {
-        this.mvpPresenterHandlers = mvpPresenterHandlers;
-
+    public MvpView<HomePresenter> buildView() {
+        if(needsBuilding) {
+            postConstruct();
+        }
+        return this;
     }
 
-    @Override
-    public void initView(String userName, String role) {
+    public void initView(String userName) {
         caption.setValue("Welcome back " + userName + "!");
-        loginType.setValue("You have " + role + "!");
+
     }
+
+    @Override
+    public void setPresenter(HomePresenter homePresenter) {
+        this.homePresenter = homePresenter;
+    }
+
 }

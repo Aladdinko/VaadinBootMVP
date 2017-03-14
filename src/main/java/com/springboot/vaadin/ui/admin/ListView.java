@@ -1,9 +1,7 @@
 package com.springboot.vaadin.ui.admin;
 
-import com.springboot.vaadin.components.RTLTable;
-import com.springboot.vaadin.components.TableColumnDefinition;
-import com.springboot.vaadin.components.TableColumnDefinitionList;
 import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
+import com.springboot.vaadin.components.mvp.view.MvpView;
 import com.springboot.vaadin.domain.Account;
 import com.springboot.vaadin.domain.Role;
 import com.vaadin.data.util.BeanItemContainer;
@@ -21,26 +19,31 @@ import java.util.Collection;
  */
 
 @Component
-@SuppressWarnings("serial")
-public class ListView extends AbstractMvpView implements IListView {
+public class ListView extends AbstractMvpView<ListPresenter> {
 
-    private ListPresenterHandlers listPresenterHandlers;
+    private ListPresenter listPresenter;
     private VerticalLayout layout;
-    private RTLTable table;
-
+    private Table table;
+    private boolean needsBuilding = true;
+    BeanItemContainer<Account> container;
 
     @Autowired
     VaadinSharedSecurity vaadinSharedSecurity;
 
+
     public VerticalLayout getListUsersTable() {
+
 
         VerticalLayout tableLayout = new VerticalLayout();
         tableLayout.setSizeFull();
+        final Collection<Account> accounts = listPresenter.getAllAccounts();
+        container = new BeanItemContainer<Account>(Account.class, accounts);
 
 
-
-        table = new RTLTable("debug1");
+        table = new Table("List", container);
         table.setCaption("LIST OF USERS ");
+        table.setSelectable(true);
+
         table.addGeneratedColumn("authoritiesList", new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
@@ -52,17 +55,42 @@ public class ListView extends AbstractMvpView implements IListView {
                 return verticalLayout;
             }
         });
-        table.getColumnAlignment("authoritiesList").toString();
+        table.addGeneratedColumn("edit", new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+                HorizontalLayout editLayout = new HorizontalLayout();
+
+                final Account account = (Account) itemId;
+                final Button button = new Button(FontAwesome.EDIT);
+                button.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        listPresenter.openWindowEdition(account);
+                    }
+                });
+                editLayout.addComponent(button);
+
+                return editLayout;
+            }
+        });
+
+        if (vaadinSharedSecurity.hasAuthority(Role.ROLE_ADMIN)) {
+            table.setVisibleColumns(new Object[]{"username", "password", "authoritiesList", "edit"});
+            table.setColumnHeaders("Username", "Password", "Roles", "Edit");
+        } else {
+            table.setVisibleColumns(new Object[]{"username", "password", "authoritiesList"});
+            table.setColumnHeaders("Username", "Password", "Roles");
+        }
+
+
         table.setSelectable(true);
-        table.setFooterVisible(true);
+        table.setImmediate(true);
         table.setSizeFull();
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
 
         Button buttonCreate = buttonCreateUsers();
-        Button buttonEdit = buttonEditUsers(table, true);
         buttonLayout.addComponent(buttonCreate);
-        buttonLayout.addComponent(buttonEdit);
 
         tableLayout.addComponent(table);
 
@@ -77,62 +105,48 @@ public class ListView extends AbstractMvpView implements IListView {
         return tableLayout;
     }
 
-    public void refreshData() {
-        table.setContainerDataSource(null);
-
-        Collection<Account> accounts = listPresenterHandlers.getAllAccounts();
-
-        BeanItemContainer<Account> container = new BeanItemContainer<Account>(Account.class, accounts);
+    public void setModel(Collection<Account> accounts) {
+        container = new BeanItemContainer<Account>(Account.class, accounts);
         table.setContainerDataSource(container);
+        if (vaadinSharedSecurity.hasAuthority(Role.ROLE_ADMIN)) {
+            table.setVisibleColumns(new Object[]{"username", "password", "authoritiesList", "edit"});
+        } else {
+            table.setVisibleColumns(new Object[]{"username", "password", "authoritiesList"});
+        }
+    }
 
-        TableColumnDefinitionList columnDefinitionList = new TableColumnDefinitionList();
-        columnDefinitionList.add(0, new TableColumnDefinition("username", "Username", Table.Align.LEFT));
-        columnDefinitionList.add(1, new TableColumnDefinition("password", "Password", Table.Align.LEFT));
-        columnDefinitionList.add(2, new TableColumnDefinition("authoritiesList", "Roles", Table.Align.LEFT));
-        table.setColumnsByColumnDefinitionList(columnDefinitionList);
+    public void refreshData() {
+        Collection<Account> accounts = listPresenter.getAllAccounts();
+        table.setContainerDataSource(null);
+        setModel(accounts);
     }
 
     public Button buttonCreateUsers() {
         Button buttonCreateAccounts = new Button("Open Creating Account", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if(listPresenterHandlers.showView().getParent() != null) {
-                    Notification.show("The window is already open", Notification.Type.HUMANIZED_MESSAGE);
-                } else {
-                    getUI().addWindow(listPresenterHandlers.showView());
-                }
-
+                listPresenter.openWindowCreation();
             }
         });
         buttonCreateAccounts.setStyleName(ValoTheme.BUTTON_PRIMARY);
         return buttonCreateAccounts;
     }
 
-    public Button buttonEditUsers(final RTLTable table, final boolean tag) {
-        Button buttonEditAccounts = new Button("Edit Account", new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                listPresenterHandlers.editAccount(table, tag);
-            }
-
-        });
-        buttonEditAccounts.setIcon(FontAwesome.PENCIL);
-        buttonEditAccounts.setStyleName(ValoTheme.BUTTON_FRIENDLY);
-        return buttonEditAccounts;
-    }
-
-
     @Override
-    public void setPresenterHandlers(ListPresenterHandlers listPresenterHandlers) {
-        this.listPresenterHandlers = listPresenterHandlers;
+    public void setPresenter(ListPresenter listPresenter) {
+        this.listPresenter = listPresenter;
     }
 
     @Override
-    public void initView() {
-        setSizeFull();
-        layout = getListUsersTable();
-        layout.setSizeFull();
-        setCompositionRoot(layout);
+    public MvpView<ListPresenter> buildView() {
+        needsBuilding = true;
+        if (needsBuilding) {
+            needsBuilding = false;
+            setSizeFull();
+            layout = getListUsersTable();
+            layout.setSizeFull();
+            setCompositionRoot(layout);
+        }
+        return this;
     }
-
 }

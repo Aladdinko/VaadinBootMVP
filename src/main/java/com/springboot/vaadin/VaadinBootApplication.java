@@ -31,8 +31,6 @@ public class VaadinBootApplication {
         @Autowired
         CustomAuthenticationProvider customAuthenticationProvider;
 
-
-
         @Autowired
         public void configure(AuthenticationManagerBuilder auth) throws Exception {
             auth.authenticationProvider(customAuthenticationProvider);

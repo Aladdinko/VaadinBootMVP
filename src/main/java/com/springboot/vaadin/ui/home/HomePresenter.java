@@ -2,6 +2,7 @@ package com.springboot.vaadin.ui.home;
 
 
 import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
+import com.springboot.vaadin.service.AccesService;
 import com.springboot.vaadin.ui.ViewToken;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
@@ -16,28 +17,24 @@ import org.vaadin.spring.security.shared.VaadinSharedSecurity;
  */
 
 @SpringView(name= ViewToken.HOME)
-public class HomePresenter extends AbstractMvpPresenterView<IHomeView> implements HomePresenterHandlers {
+public class HomePresenter extends AbstractMvpPresenterView<HomeView> {
 
+    @Autowired
+    AccesService accesService;
 
     @Autowired
     VaadinSharedSecurity vaadinSharedSecurity;
+
     @Autowired
     public HomePresenter(HomeView view, EventBus.ViewEventBus eventBus) {
         super(view, eventBus);
-        getView().setPresenterHandlers(this);
+        getView().setPresenter(this);
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-
-		/*
-		 * UsernamePasswordAuthenticationToken OR
-		 * AnonymousAuthenticationToken
-		 */
-
         Authentication authentication = vaadinSharedSecurity.getAuthentication();
-        getView().initView(authentication.getName(), authentication.getAuthorities().iterator().next().getAuthority());
-
+        getView().initView(authentication.getName());
     }
 
 }

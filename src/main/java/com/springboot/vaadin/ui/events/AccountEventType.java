@@ -5,5 +5,7 @@ package com.springboot.vaadin.ui.events;
  */
 public enum AccountEventType {
     CREATE,
+    SAVE,
     EDIT
+
 }
