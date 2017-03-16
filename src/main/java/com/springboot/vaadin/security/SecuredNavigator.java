@@ -1,5 +1,6 @@
 package com.springboot.vaadin.security;
 
+import com.springboot.vaadin.ui.MainUI;
 import com.springboot.vaadin.ui.ViewToken;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewDisplay;
@@ -18,13 +19,14 @@ public class SecuredNavigator extends Navigator {
 
     final VaadinSharedSecurity vaadinSharedSecurity;
     final SpringViewProvider viewProvider;
-    final EventBus.UIEventBus eventBus;
 
-    public SecuredNavigator(UI ui, ViewDisplay display,VaadinSharedSecurity vaadinSharedSecurity, SpringViewProvider viewProvider, EventBus.UIEventBus eventBus) {
+    private EventBus.UIEventBus eventBus;
+
+    public SecuredNavigator(UI ui, ViewDisplay display,VaadinSharedSecurity vaadinSharedSecurity, SpringViewProvider viewProvider) {
         super(ui, display);
         this.viewProvider = viewProvider;
         this.vaadinSharedSecurity = vaadinSharedSecurity;
-        this.eventBus = eventBus;
+        eventBus = ((MainUI)MainUI.getCurrent()).getEventBus();
         addProvider(this.viewProvider);
     }
 

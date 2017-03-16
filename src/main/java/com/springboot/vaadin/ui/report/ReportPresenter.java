@@ -20,7 +20,8 @@ public class ReportPresenter  extends AbstractMvpPresenterView<ReportView>  {
     ReportView reportView;
 
     public ReportPresenter(ReportView view, EventBus.ViewEventBus eventBus) {
-        super(view, eventBus);
+        super(view);
+        view.setPresenter(this);
     }
 
     public ReportView getView() {

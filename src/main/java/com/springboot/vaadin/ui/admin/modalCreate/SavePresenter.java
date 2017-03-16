@@ -6,6 +6,7 @@ import com.springboot.vaadin.domain.Account;
 import com.springboot.vaadin.domain.Role;
 import com.springboot.vaadin.service.AccountService;
 import com.springboot.vaadin.service.RoleService;
+import com.springboot.vaadin.ui.MainUI;
 import com.springboot.vaadin.ui.events.AccountEvent;
 import com.springboot.vaadin.ui.events.AccountEventType;
 import com.vaadin.data.util.BeanItem;
@@ -28,7 +29,7 @@ public class SavePresenter implements MvpPresenter {
     @Autowired
     SaveView view;
 
-    private final EventBus.ViewEventBus eventBus;
+    private EventBus.UIEventBus eventBus;
 
     private BeanItem<Account> accountBeanItem;
     @Autowired
@@ -37,10 +38,9 @@ public class SavePresenter implements MvpPresenter {
     @Autowired
     AccountService accountService;
 
-    @Autowired
-    public SavePresenter(SaveView view, EventBus.ViewEventBus eventBus) {
+    public SavePresenter(SaveView view) {
         this.view = view;
-        this.eventBus = eventBus;
+        eventBus = ((MainUI)MainUI.getCurrent()).getEventBus();
         view.setPresenter(this);
     }
 
@@ -51,7 +51,7 @@ public class SavePresenter implements MvpPresenter {
     public void saveAccount() throws UsernameAlreadyUsedException {
         accountService.createAccount(accountBeanItem);
         view.close();
-        eventBus.publish(EventScope.VIEW, this, new AccountEvent(AccountEventType.CREATE));
+        eventBus.publish(EventScope.UI, this, new AccountEvent(AccountEventType.CREATE));
     }
 
     public void setModelSave(BeanItem<Account> accountBeanItem) {

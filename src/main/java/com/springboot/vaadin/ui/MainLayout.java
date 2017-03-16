@@ -21,7 +21,6 @@ import org.vaadin.spring.events.annotation.EventBusListenerMethod;
 import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.UUID;
 
 /**
@@ -47,13 +46,12 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
     VaadinSharedSecurity vaadinSharedSecurity;
 
     @Autowired
-    EventBus.UIEventBus eventBus;
+    private EventBus.UIEventBus eventBus;
 
     @PostConstruct
     public void postConstruct() {
         setSizeFull();
         eventBus.subscribe(this);
-
         navbar = new HorizontalLayout();
         navbar.setWidth("100%");
         navbar.setMargin(true);
@@ -115,10 +113,10 @@ public class MainLayout extends VerticalLayout implements ViewDisplay, Button.Cl
         UI.getCurrent().getNavigator().navigateTo(ViewToken.HOME);
     }
 
-    @PreDestroy
-    public void preDestroy() {
-        eventBus.unsubscribe(this);
-    }
+//    @PreDestroy
+//    public void preDestroy() {
+//        eventBus.unsubscribe(this);
+//    }
 
     @Override
     public void buttonClick(Button.ClickEvent event) {

@@ -4,25 +4,30 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.springboot.vaadin.domain.Account;
 import com.springboot.vaadin.service.AccesService;
-import com.vaadin.data.util.BeanItemContainer;
+import com.springboot.vaadin.ui.MainUI;
+import com.springboot.vaadin.ui.events.ActionEvent;
+import com.springboot.vaadin.ui.events.ActionEventType;
+import com.vaadin.spring.annotation.ViewScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
+import org.vaadin.spring.events.EventBus;
+import org.vaadin.spring.events.EventScope;
 
 import java.io.FileOutputStream;
 
 /**
  * Created by maggouh on 13/03/17.
  */
+@ViewScope
 @Component
 public class FirstPdf {
 
     @Autowired
     public AccesService accesService;
 
-    static BeanItemContainer<Account> container;
+    private EventBus.UIEventBus eventBus;
 
     private static String FILE = "c:/temp/FirstPdf.pdf";
 
@@ -31,9 +36,10 @@ public class FirstPdf {
     private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
             Font.BOLD);
 
+
     public FirstPdf(AccesService accesService) {
         this.accesService = accesService;
-
+        eventBus = ((MainUI)MainUI.getCurrent()).getEventBus();
     }
 
     public void buildPdf() {
@@ -44,11 +50,11 @@ public class FirstPdf {
             addMetaData(document);
             addContent(document);
             document.close();
+            eventBus.publish(EventScope.UI, this, new ActionEvent(ActionEventType.HOME_AFTER_GENARATE_PDF));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     // iText allows to add metadata to the PDF which can be viewed in your Adobe
     // Reader
@@ -74,21 +80,28 @@ public class FirstPdf {
         try {
             subCatPart.add(new Paragraph(FirstPdf.this.accesService.adminShowEcho("Hello administrators")));
         } catch (AccessDeniedException ex) {
-            subCatPart.add(new Paragraph(FirstPdf.this.accesService.authenticatShowEcho("Hello non admins")));
+            subCatPart.add(new Paragraph("******************************"));
         }
-        subPara = new Paragraph("Users text", subFont);
-        subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph(FirstPdf.this.accesService.authenticatShowEcho("Hello users")));
-        subPara = new Paragraph("List Table", subFont);
-        subCatPart = catPart.addSection(subPara);
+            subPara = new Paragraph("Users text", subFont);
+            subCatPart = catPart.addSection(subPara);
 
-        // add a list
+        try {
+            subCatPart.add(new Paragraph(FirstPdf.this.accesService.authenticatShowEcho("Hello users")));
+        } catch (AccessDeniedException ex) {
+            subCatPart.add(new Paragraph("******************************"));
+        }
+
+
+//        subPara = new Paragraph("List Table", subFont);
+//        subCatPart = catPart.addSection(subPara);
+//
+//        // add a list
         Paragraph paragraph = new Paragraph();
         addEmptyLine(paragraph, 1);
         subCatPart.add(paragraph);
-
-        // add a table
-        createTable(subCatPart);
+//
+//        // add a table
+//        createTable(subCatPart);
 
         // now add all this to the document
         document.add(catPart);

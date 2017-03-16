@@ -2,6 +2,7 @@ package com.springboot.vaadin.ui.report;
 
 import com.springboot.vaadin.components.mvp.view.AbstractMvpView;
 import com.springboot.vaadin.components.mvp.view.MvpView;
+import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by maggouh on 13/03/17.
  */
-
+@ViewScope
 @Component
 public class ReportView extends AbstractMvpView<ReportPresenter> {
 

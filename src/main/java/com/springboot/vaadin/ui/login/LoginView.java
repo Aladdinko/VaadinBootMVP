@@ -5,6 +5,7 @@ import com.springboot.vaadin.components.mvp.view.MvpView;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 * Created by maggouh on 13/02/17.
 */
 @Component
+@ViewScope
 public class LoginView extends AbstractMvpView<LoginPresenter> implements Button.ClickListener {
 
     private LoginPresenter loginPresenter;

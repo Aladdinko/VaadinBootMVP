@@ -4,6 +4,7 @@ import com.springboot.vaadin.components.mvp.presenter.AbstractMvpPresenterView;
 import com.springboot.vaadin.domain.Account;
 import com.springboot.vaadin.domain.Role;
 import com.springboot.vaadin.service.AccountService;
+import com.springboot.vaadin.ui.MainUI;
 import com.springboot.vaadin.ui.ViewToken;
 import com.springboot.vaadin.ui.admin.modalCreate.SavePresenter;
 import com.springboot.vaadin.ui.events.AccountEvent;
@@ -32,13 +33,12 @@ public class ListPresenter extends AbstractMvpPresenterView<ListView> {
     @Autowired
     private AccountService accountService;
 
-    private EventBus.ViewEventBus eventBus;
+    EventBus.UIEventBus eventBus;
 
-    @Autowired
-    public ListPresenter(ListView view, EventBus.ViewEventBus eventBus) {
-        super(view, eventBus);
-        this.eventBus = eventBus;
+    public ListPresenter(ListView view) {
+        super(view);
         getView().setPresenter(this);
+        eventBus = ((MainUI)MainUI.getCurrent()).getEventBus();
         eventBus.subscribe(this);
     }
 

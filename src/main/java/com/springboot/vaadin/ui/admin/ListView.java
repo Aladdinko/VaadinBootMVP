@@ -6,6 +6,7 @@ import com.springboot.vaadin.domain.Account;
 import com.springboot.vaadin.domain.Role;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.Collection;
  */
 
 @Component
+@ViewScope
 public class ListView extends AbstractMvpView<ListPresenter> {
 
     private ListPresenter listPresenter;

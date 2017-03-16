@@ -16,10 +16,7 @@ public class AccesService {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String adminShowEcho(String s) {
-//        if(vaadinSharedSecurity.hasAuthority("ROLE_ADMIN")) {
             return "I am admin:" + s;
-//        }
-//        return null;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")

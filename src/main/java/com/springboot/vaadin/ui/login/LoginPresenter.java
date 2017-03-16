@@ -14,7 +14,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.security.shared.VaadinSharedSecurity;
 
 import java.util.Collection;
@@ -37,8 +36,8 @@ public class LoginPresenter extends AbstractMvpPresenterView<LoginView> {
 
 
     @Autowired
-    public LoginPresenter(LoginView view, EventBus.ViewEventBus eventBus) {
-        super(view, eventBus);
+    public LoginPresenter(LoginView view) {
+        super(view);
         getView().setPresenter(this);
     }
 
